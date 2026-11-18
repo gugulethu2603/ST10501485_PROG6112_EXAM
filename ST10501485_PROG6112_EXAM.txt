@@ -1,0 +1,375 @@
+#Question 1
+
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ */
+
+package com.mycompany.mattresssalesreport;
+
+/**
+ *
+ * @author 50324
+ */
+
+import java.util.Scanner;
+
+interface IProduct {
+
+    int GetTotalProductsSold();
+
+    double GetAverageProductSold();
+
+    String GetMostPopularProduct();
+}
+
+class Product implements IProduct {
+
+    String[] names = {
+        "Cozy Nights Monarch",
+        "Restonic Barbados",
+        "Sealy Phuket"
+    };
+
+    int[][] sales;
+
+    public Product(int[][] data) {
+        sales = data;
+    }
+
+    @Override
+    public int GetTotalProductsSold() {
+
+        int total = 0;
+
+        for (int i = 0; i < sales.length; i++) {
+
+            for (int j = 0; j < sales[i].length; j++) {
+
+                total = total + sales[i][j];
+            }
+        }
+
+        return total;
+    }
+
+    @Override
+    public double GetAverageProductSold() {
+
+        return (double) GetTotalProductsSold() / 9;
+    }
+
+    @Override
+    public String GetMostPopularProduct() {
+
+        int biggest = 0;
+        String popular = "";
+
+        for (int i = 0; i < sales.length; i++) {
+
+            int productTotal = 0;
+
+            for (int j = 0; j < sales[i].length; j++) {
+
+                productTotal = productTotal + sales[i][j];
+            }
+
+            if (productTotal > biggest) {
+
+                biggest = productTotal;
+                popular = names[i];
+            }
+        }
+
+        return popular + "(" + biggest + ")";
+    }
+}
+
+class PrintProduct {
+
+    public void PrintTotalSales(Product p) {
+
+        System.out.println(
+                "TOTAL PRODUCT SALES: "
+                + p.GetTotalProductsSold());
+    }
+
+    public void PrintAverageSales(Product p) {
+
+        System.out.println(
+                "AVERAGE PRODUCT SALES: "
+                + Math.round(p.GetAverageProductSold()));
+    }
+
+    public void PrintPopularProduct(Product p) {
+
+        System.out.println(
+                "MOST POPULAR PRODUCT: "
+                + p.GetMostPopularProduct());
+    }
+}
+
+public class MattressSalesReport {
+
+    public static void main(String[] args) {
+
+        Scanner input = new Scanner(System.in);
+
+        String[] products = {
+            "Cozy Nights Monarch",
+            "Restonic Barbados",
+            "Sealy Phuket"
+        };
+
+        int[][] sales = new int[3][3];
+
+        for (int i = 0; i < products.length; i++) {
+
+            for (int j = 0; j < 3; j++) {
+
+                System.out.print(
+                        "Enter number of sales for month "
+                        + (j + 1)
+                        + " for "
+                        + products[i]
+                        + " mattress: ");
+
+                sales[i][j] = input.nextInt();
+            }
+
+            System.out.println();
+        }
+
+        Product product = new Product(sales);
+
+        PrintProduct report = new PrintProduct();
+
+        System.out.println();
+        System.out.println("PRODUCT SALES REPORT - 2026");
+        System.out.println();
+
+        System.out.println(
+                "**************");
+
+        report.PrintTotalSales(product);
+
+        report.PrintAverageSales(product);
+
+        report.PrintPopularProduct(product);
+    }
+}
+
+
+
+
+
+#Question 2
+
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ */
+
+package com.mycompany.productapp;
+
+/**
+ *
+ * @author 50324
+ */
+
+
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.*;
+
+interface IProductCalculations {
+
+    double GetVat();
+
+    double GetCommission();
+
+    double GetTotal();
+}
+
+class ProductCalculations implements IProductCalculations {
+
+    private double price;
+
+    public ProductCalculations(double price) {
+        this.price = price;
+    }
+
+    @Override
+    public double GetVat() {
+        return price * 0.15;
+    }
+
+    @Override
+    public double GetCommission() {
+        return price * 0.05;
+    }
+
+    @Override
+    public double GetTotal() {
+        return price + GetVat() + GetCommission();
+    }
+}
+
+public class ProductApp extends JFrame {
+
+    JTextField txtCustomer;
+    JTextField txtPrice;
+
+    JComboBox<String> cmbProduct;
+
+    JButton btnProcess;
+
+    public ProductApp() {
+
+        setTitle("Product App");
+
+        setSize(500,300);
+
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+        setLayout(new GridLayout(4,2));
+
+        JMenuBar bar = new JMenuBar();
+
+        JMenu file = new JMenu("File");
+        JMenu tools = new JMenu("Tools");
+
+        JMenuItem exit = new JMenuItem("Exit");
+        JMenuItem process = new JMenuItem("Process");
+        JMenuItem clear = new JMenuItem("Clear");
+
+        file.add(exit);
+
+        tools.add(process);
+        tools.add(clear);
+
+        bar.add(file);
+        bar.add(tools);
+
+        setJMenuBar(bar);
+
+        txtCustomer = new JTextField();
+
+        txtPrice = new JTextField();
+
+        cmbProduct = new JComboBox<>();
+
+        cmbProduct.addItem("Cozy Nights Monarch");
+        cmbProduct.addItem("Restonic Barbados");
+        cmbProduct.addItem("Sealy Phuket");
+
+        btnProcess = new JButton("PROCESS");
+
+        add(new JLabel("Customer Name"));
+        add(txtCustomer);
+
+        add(new JLabel("Select Product"));
+        add(cmbProduct);
+
+        add(new JLabel("Enter Price"));
+        add(txtPrice);
+
+        add(new JLabel(""));
+        add(btnProcess);
+
+        btnProcess.addActionListener(e -> ProcessSale());
+
+        process.addActionListener(e -> ProcessSale());
+
+        clear.addActionListener(e -> {
+
+            txtCustomer.setText("");
+
+            txtPrice.setText("");
+
+            cmbProduct.setSelectedIndex(0);
+        });
+
+        exit.addActionListener(e -> System.exit(0));
+
+        setVisible(true);
+    }
+
+    private void ProcessSale() {
+
+        String customer = txtCustomer.getText();
+
+        String product =
+                cmbProduct.getSelectedItem().toString();
+
+        double price =
+                Double.parseDouble(txtPrice.getText());
+
+        ProductCalculations calc =
+                new ProductCalculations(price);
+
+        double vat = calc.GetVat();
+
+        double commission =
+                calc.GetCommission();
+
+        double total =
+                calc.GetTotal();
+
+        String message =
+                "Customer Name: " + customer
+                + "\nProduct: " + product
+                + "\nVAT: R " + vat
+                + "\nCOMMISSION: R " + commission
+                + "\nTOTAL: R " + total;
+
+        JOptionPane.showMessageDialog(
+                null,
+                message
+        );
+
+        try {
+
+            PrintWriter out =
+                    new PrintWriter(
+                            new FileWriter("data.txt")
+                    );
+
+            out.println("DATA LOG");
+            out.println(
+                    "***********");
+
+            out.println("Customer Name: "
+                    + customer);
+
+            out.println("Product: "
+                    + product);
+
+            out.println("VAT: R "
+                    + vat);
+
+            out.println("COMMISSION: R "
+                    + commission);
+
+            out.println("TOTAL: R "
+                    + total);
+
+            out.println(
+                    "***********");
+
+            out.close();
+
+        }
+        catch(Exception ex) {
+
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Error Saving File"
+            );
+        }
+    }
+
+    public static void main(String[] args) {
+
+        new ProductApp();
+    }
+}
